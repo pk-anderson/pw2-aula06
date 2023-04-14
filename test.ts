@@ -2,20 +2,20 @@ import {arraysEqual, equalElements, arraysOfArraysEqual, compareArrays, Cidade, 
 
 //Questão 1
 
-var firstArray = ['eu','tu','ele']
-var secondArray = ['nos','vos','eles']
+var firstArray = ['ab','cd','ef']
+var secondArray = ['gh','ij','lm']
 console.log(arraysEqual(firstArray,secondArray))
-var firstArray = ['eu','tu','ele']
-var secondArray = ['eu','tu','ele']
+var firstArray = ['ab','cd','ef']
+var secondArray = ['ab','cd','ef']
 console.log(arraysEqual(firstArray,secondArray))
 
 //Questão 2
 
-var firstArray = ['eu','tu']
-var secondArray = ['eu','tu','ele']
+var firstArray = ['ab','cd']
+var secondArray = ['ab','cd','ef']
 console.log(equalElements(firstArray,secondArray))
-var firstArray = ['eu','tu','ele']
-var secondArray = ['eu','tu','eles']
+var firstArray = ['ab','cd','ef']
+var secondArray = ['ab','cd','gh']
 console.log(equalElements(firstArray,secondArray))
 
 //Questão 3
