@@ -1,23 +1,20 @@
 // Questão 1
-export function HasEqualString(a: string[], b: string[]): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  const aSet = new Set(a);
-
-  for (const str of b) {
-    if (!aSet.has(str)) {
+export function arraysEqual(a: string[], b: string[]): boolean {
+    if (a.length !== b.length) {
       return false;
     }
-  }
-
-  return true;
+  
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) {
+        return false;
+      }
+    }
+  
+    return true;
 }
-
+  
 //Questão 2
-
-export function hasEqualElements(a: string[], b: string[]): (string | undefined)[] | undefined {
+export function equalElements(a: string[], b: string[]): (string | undefined)[] | undefined {
   if (a.length !== b.length) {
     return undefined;
   }
@@ -36,64 +33,51 @@ export function hasEqualElements(a: string[], b: string[]): (string | undefined)
 }
 
 //Questão 3 
-
-export function hasEqualArrays(a: string[][], b: string[][]): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  for (let i = 0; i < a.length; i++) {
-    const aSub = a[i];
-    const bSub = b[i];
-
-    if (aSub.length !== bSub.length) {
+export function arraysOfArraysEqual(a: string[][], b: string[][]): boolean {
+    if (a.length !== b.length) {
       return false;
     }
-
-    for (let j = 0; j < aSub.length; j++) {
-      if (aSub[j] !== bSub[j]) {
+  
+    for (let i = 0; i < a.length; i++) {
+      if (!arraysEqual(a[i], b[i])) {
         return false;
       }
     }
+  
+    return true;
   }
-
-  return true;
-}
 
 //Questão 4
-
 export function compareArrays(a: string[][], b: string[][]): (string | undefined)[][] {
-  const result: (string | undefined)[][] = [];
-
-  for (let i = 0; i < a.length && i < b.length; i++) {
-    const aSub = a[i];
-    const bSub = b[i];
-
-    if (aSub.length !== bSub.length) {
-      result.push(undefined);
-    } else {
-      const subresult: (string | undefined)[] = [];
-
-      for (let j = 0; j < aSub.length; j++) {
-        if (aSub[j] === bSub[j]) {
-          subresult.push(aSub[j]);
-        } else {
-          subresult.push(undefined);
+    const result: (string | undefined)[][] = [];
+  
+    for (let i = 0; i < a.length && i < b.length; i++) {
+      const aSub = a[i];
+      const bSub = b[i];
+  
+      if (aSub.length !== bSub.length) {
+        result.push([]);
+      } else {
+        const subresult: (string | undefined)[] = [];
+  
+        for (let j = 0; j < aSub.length; j++) {
+          if (aSub[j] === bSub[j]) {
+            subresult.push(aSub[j]);
+          } else {
+            subresult.push(undefined);
+          }
         }
+  
+        result.push(subresult);
       }
-
-      result.push(subresult);
     }
+  
+    return result;
   }
 
-  return result;
-}
-
 //Questão 5
-
 export interface Cidade {
   nome: string;
-  estado: string;
   alcunha: string;
   coordenadas: {
     latitude: [number, number, number];
@@ -102,40 +86,39 @@ export interface Cidade {
 }
 
 export function descreveCidade(cidade: Cidade): string {
-  const [latGraus, latMinutos, latSegundos] = cidade.coordenadas.latitude;
-  const [lonGraus, lonMinutos, lonSegundos] = cidade.coordenadas.longitude;
-
-  const latitude = `${latGraus}° ${latMinutos}' ${latSegundos}" ${
-    latGraus < 0 ? "S" : "N"
-  }`;
-  const longitude = `${lonGraus}° ${lonMinutos}' ${lonSegundos}" ${
-    lonGraus < 0 ? "O" : "L"
-  }`;
-
-  return `${cidade.nome}, ${cidade.estado}\n* "${cidade.alcunha}"\n* Localizada em ${latitude} ${longitude}`;
-}
+    const lat = grausMinutosSegundos(cidade.coordenadas.latitude, "S");
+    const long = grausMinutosSegundos(cidade.coordenadas.longitude, "O");
+  
+    return `${cidade.nome}, Paraíba\n* "${cidade.alcunha}"\n* Localizada em ${lat} ${long}`;
+  }
+  
+  function grausMinutosSegundos(coord: [number, number, number], dir: string): string {
+    const graus = coord[0];
+    const minutos = coord[1];
+    const segundos = coord[2];
+  
+    return `${graus}° ${minutos}' ${segundos}" ${dir}`;
+  }
 
 //Questão 6
 
 export interface Restaurante {
-  cidade: string;
-  nome: string;
-}
-
-export interface RestaurantesAgrupados {
-  [key: string]: string[];
-}
-
-export function agruparRestaurantesPorCidade(restaurantes: Restaurante[]): RestaurantesAgrupados {
-  const restaurantesAgrupados: RestaurantesAgrupados = {};
-
-  for (const restaurante of restaurantes) {
-    if (restaurante.cidade in restaurantesAgrupados) {
-      restaurantesAgrupados[restaurante.cidade].push(restaurante.nome);
-    } else {
-      restaurantesAgrupados[restaurante.cidade] = [restaurante.nome];
-    }
+    cidade: string;
+    nome: string;
+  }
+  
+  interface Resultado {
+    [cidade: string]: string[];
   }
 
-  return restaurantesAgrupados;
-}
+export function agruparRestaurantesPorCidade(restaurantes: Restaurante[]): Resultado {
+    return restaurantes.reduce((resultado: Resultado, restaurante: Restaurante) => {
+      if (!resultado[restaurante.cidade]) {
+        resultado[restaurante.cidade] = [];
+      }
+  
+      resultado[restaurante.cidade].push(restaurante.nome);
+  
+      return resultado;
+    }, {});
+  }
